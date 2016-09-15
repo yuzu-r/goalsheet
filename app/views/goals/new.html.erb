@@ -1,0 +1,25 @@
+<h3 class="text-center">Create a new goal</h3>
+<form>
+  <div class="form-group col-md-10 col-md-offset-1">
+    <label for="title">Title</label>
+    <input type="text" class="form-control" placeholder="e.g. Codewar kata" id="title">
+  </div>
+  <div class="form-group col-md-10 col-md-offset-1">
+    <label for="description">Description (optional)</label>
+    <textarea class="form-control" placeholder="Describe your goal in more detail here." id= "description" rows="3"></textarea>
+  </div>
+  <div class="form-group col-md-10 col-md-offset-1">
+    <label for="frequency">Frequency</label>
+    <div class="form-control-static">
+      (1 for weekly; up to 7 for daily)
+    </div>
+    <input type="number" class="form-control" id="frequency" max="7" min="0">
+  </div>
+  <div class="form-group col-md-10 col-md-offset-1">
+    <label class="" for="duration">Session Length (minutes)</label>
+    <input type="number" class="form-control" id="duration" min = "0" step="5" value= "30">
+  </div>
+  <div class="col-md-10 col-md-offset-1">
+    <button type="submit" class="btn btn-primary">Create</button>
+  </div>  
+</form>
