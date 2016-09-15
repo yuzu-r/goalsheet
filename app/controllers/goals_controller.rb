@@ -13,7 +13,7 @@ class GoalsController < ApplicationController
     if @goal.valid?
       redirect_to root_path
     else
-      render :new, {:user_id => u.id}, status: :unprocessable_entity
+      render :new, status: :unprocessable_entity
     end
   end
 

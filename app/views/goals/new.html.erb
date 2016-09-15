@@ -1,5 +1,15 @@
 <h3 class="text-center">Create a new goal</h3>
 <%= form_for @goal, url: user_goals_path do |f| %>
+  <% if @goal.errors.any? %>
+    <div class="col-md-10 col-md-offset-1" id="errors">
+      <h4><%= pluralize(@goal.errors.count, "error") %> prevented this goal from being saved:</h4>
+      <ul>
+        <% @goal.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
   <div class="form-group col-md-10 col-md-offset-1">
     <%=f.label :title %>
     <%=f.text_field :title, class: "form-control", placeholder: "e.g. Codewar Kata" %>
