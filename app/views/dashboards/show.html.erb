@@ -2,3 +2,18 @@
 
 <h3>My Dashboard</h3>
 <h4>Hi, <%= current_user.email %>. Here's what's up for today:</h4>
+<% if @daily_plan.new_record? %>
+  No goals are being tracked for today. Add some and get going!
+<% else %>
+  Today so far:
+
+<% end %>
+
+<h4> Available goals: </h4>
+  <ul>
+    <% current_user.goals.each do |g| %> 
+      <li>
+        <%= g.title %> <%= link_to 'start tracking', '#' %>
+      </li>
+    <% end %>
+  </ul>
