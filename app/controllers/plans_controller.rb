@@ -16,10 +16,8 @@ class PlansController < ApplicationController
     @plan = Plan.find(params[:id])
     if @plan.valid?
       if @plan.is_complete
-        logger.info "plan is complete, mark false"
         @plan.update_attributes(is_complete: false)
       else
-        logger.info "plan #{@plan.id} #{@plan.created_at} is not yet complete, mark true"
         @plan.update_attributes(is_complete: true)
       end
     else
