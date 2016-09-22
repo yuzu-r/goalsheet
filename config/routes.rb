@@ -8,7 +8,14 @@ Rails.application.routes.draw do
   resources :users do 
     resources :goals, only: [:new, :create, :edit, :destroy, :index]
   end
-  resource :dashboard, only: [:show]
+  resource :dashboard, only: [:show] do
+    resources :plans, only: [:create, :edit] do
+      member do
+        patch :mark_complete
+        patch :toggle_timer
+      end
+    end  
+  end
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 

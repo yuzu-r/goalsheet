@@ -26,8 +26,8 @@
     <%= f.number_field :frequency, class: "form-control", max: "7", min:"0" %>
   </div>
   <div class="form-group col-md-10 col-md-offset-1">
-    <%= f.label :duration %>
-    <%= f.number_field :duration, class: "form-control", min: "0", step: "5", value: "30" %>
+    <%= f.label "Duration" %>
+    <%= f.number_field :session_length, class: "form-control", min: "0", step: "5", value: "30" %>
   </div>
   <div class="col-md-10 col-md-offset-1">
     <%=f.submit class: "btn btn-primary" %>
