@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160916001527) do
+ActiveRecord::Schema.define(version: 20160925203619) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,10 +35,10 @@ ActiveRecord::Schema.define(version: 20160916001527) do
     t.integer  "duration"
     t.datetime "start_time"
     t.datetime "end_time"
-    t.time     "elapsed_time"
     t.boolean  "is_complete"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+    t.integer  "elapsed_time_seconds"
   end
 
   add_index "plans", ["goal_id"], name: "index_plans_on_goal_id", using: :btree
