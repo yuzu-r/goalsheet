@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       member do
         patch :mark_complete
         patch :toggle_timer
+        patch :get_elapsed_time
       end
     end  
   end
