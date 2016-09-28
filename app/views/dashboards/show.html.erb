@@ -44,7 +44,7 @@
 
 <h4> Available goals: </h4>
 <ul>
-  <% current_user.goals.each do |g| %> 
+  <% current_user.unplanned_goals.each do |g| %> 
     <li>
       <%= g.title %> <%= link_to 'start tracking', dashboard_plans_path(@plan, goal_id: g.id), method: :post %>
     </li>

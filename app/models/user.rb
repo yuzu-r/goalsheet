@@ -5,5 +5,9 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
   has_many :plans
   has_many :goals
-
+  #scope :todays, -> { where("created_at >= ?", Time.zone.now.beginning_of_day) }
+  def unplanned_goals
+    # this is all the user goals that are not in any plans for today
+    goals.where.not(id: plans.todays.pluck(:goal_id))
+  end
 end
