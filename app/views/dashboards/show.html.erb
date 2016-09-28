@@ -39,7 +39,7 @@
       </tr>
     <% end %>
   </table>
-
+ Total elapsed time so far today: <%= Time.at(@plans.sum("elapsed_time_seconds")).utc.strftime("%H:%M:%S") %>.
 <% end %>
 
 <h4> Available goals: </h4>
