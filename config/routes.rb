@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   # You can have the root of your site routed with "root"
   root 'static_pages#welcome'
   resources :users do 
-    resources :goals, only: [:new, :create, :edit, :destroy, :index]
+    resources :goals, only: [:new, :create, :edit, :destroy, :index, :update]
   end
   resource :dashboard, only: [:show] do
     resources :plans, only: [:create, :edit] do
