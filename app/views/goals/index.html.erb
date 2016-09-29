@@ -1,24 +1,28 @@
 
-<div class="container col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+<div class="container col-xs-10 col-xs-offset-1 col-sm-10 col-sm-offset-1">
   <h3> My Goals</h3>
 </div>
 
 <div class="container col-xs-10 col-xs-offset-1 col-sm-10 col-sm-offset-1">
   <table class="table table-hover">
     <tr>
-      <th class="col-sm-8">Title</th>
-      <th class="col-sm-4">Actions</th>
+      <th class="col-sm-3">Title</th>
+      <th class="col-sm-6">Description</th>
+      <th class="col-sm-3">Actions</th>
     </tr>
     <tbody>
   <% @goals.each do |g| %>
 
       <tr>
-        <td class="col-sm-8">
-        <%= g.title %> 
-       </td>
-       <td class="col-sm-4">
-        <%= link_to 'edit', edit_user_goal_path(id: g.id) %>  <%= link_to 'destroy', user_goal_path(id: g.id), method: :delete %>
-       </td>
+        <td class="col-sm-3">
+          <%= g.title %> 
+        </td>
+        <td class="col-sm-6"> 
+          <%= g.description %>
+        </td>
+        <td class="col-sm-3">
+          <%= link_to 'edit', edit_user_goal_path(id: g.id) %>  <%= link_to 'destroy', user_goal_path(id: g.id), method: :delete %>
+        </td>
       </tr>
     </tbody>
   <% end %>
