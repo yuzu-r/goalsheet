@@ -1,6 +1,5 @@
-<button id="bigB">ClickMeeee</button>
-
-<h4>Hi, <%= current_user.email %>. The time is now: <%=Time.zone.now %>. Here's what's up for today:</h4>
+<h3>Hi, <%= current_user.email %>. </h3>
+<h4>The time is now: <%=Time.zone.now %>. Here's what's up for today:</h4>
 <% if @plans.empty? %>
   No goals are being tracked for today. Add some and get going!
 <% else %>
@@ -38,10 +37,14 @@
       </tr>
     <% end %>
   </table>
- Total elapsed time so far today: <%= Time.at(@plans.sum("elapsed_time_seconds")).utc.strftime("%H:%M:%S") %>.
+ <h4>
+  Total elapsed time so far today: 
+  <%= Time.at(@plans.sum("elapsed_time_seconds")).utc.strftime("%H:%M:%S") %>.
+</h4>
 <% end %>
 
 <h4> Available goals: </h4>
+Don't see anything here? <%= link_to 'Add some more goals.', new_user_goal_path(current_user) %>
 <ul>
   <% current_user.unplanned_goals.each do |g| %> 
     <li>
@@ -49,6 +52,8 @@
     </li>
   <% end %>
 </ul>
+
+<button id="bigB">ClickMeeee</button>
 
 <script>
   $(document).ready(function(){
