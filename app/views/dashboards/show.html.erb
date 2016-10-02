@@ -1,48 +1,51 @@
-<h3>Hi, <%= current_user.email %>. </h3>
-<h4>The time is now: <%=Time.zone.now %>. Here's what's up for today:</h4>
-<% if @plans.empty? %>
-  No goals are being tracked for today. Add some and get going!
-<% else %>
-  <table>
-    <tr>
-      <th>Plan Id </th>
-      <th>Goal</th>
-      <th>Target Session Length</th>
-      <th>Toggle Timer</th>
-      <th>Elapsed Time</th>
-      <th>Mark Goal Complete</th>
-      <th>Remove Goal for Today</th>
-    </tr>
-    <% @plans.each do |plan| %>
+<div class="container col-sm-10 col-sm-offset-1">
+  <h4>Here's what's up for today:</h4>
+  <% if @plans.empty? %>
+    No goals are being tracked for today. Add some and get going!
+  <% else %>
+    <table class="table">
       <tr>
-        <td><%= plan.id %></td>
-        <td><%= plan.goal.title %></td>
-        <td><%= plan.goal.session_length %></td>
-        <td><button class="toggle-timer" data-id=<%=plan.id %>>start timer</button></td>
-        <td>
-          <span class="time-hours" data-id=<%=plan.id %>></span> :
-          <span class="time-minutes" data-id=<%=plan.id %>></span> :
-          <span class="time-seconds" data-id=<%=plan.id %>></span>
-        </td>
-        <% if plan.is_complete %>
-          <td> 
-            <input type="checkbox" class= "toggle-complete" data-id= <%= plan.id %> checked > 
-          </td>
-        <% else %>
-          <td>
-            <input type="checkbox" class= "toggle-complete" data-id= <%= plan.id %> >
-          </td>
-        <% end %>
-        <td>remove goal</td>
+        <th>Plan Id </th>
+        <th class="table-goal">Goal</th>
+        <th>Target Session Length</th>
+        <th>Toggle Timer</th>
+        <th>Elapsed Time</th>
+        <th>Mark Goal Complete</th>
+        <th>Remove Goal for Today</th>
       </tr>
-    <% end %>
-  </table>
- <h4>
-  Total elapsed time so far today: 
-  <%= Time.at(@plans.sum("elapsed_time_seconds")).utc.strftime("%H:%M:%S") %>.
-</h4>
-<% end %>
-
+      <% @plans.each do |plan| %>
+        <tr>
+          <td><%= plan.id %></td>
+          <td class="table-goal"><%= plan.goal.title %></td>
+          <td><%= plan.goal.session_length %></td>
+          <td>
+            <span class="toggle-timer" data-id=<%=plan.id %>><i class="fa fa-hourglass-half"></i> start timer</span>
+          </td>
+          <td>
+            <span class="time-hours" data-id=<%=plan.id %>></span> :
+            <span class="time-minutes" data-id=<%=plan.id %>></span> :
+            <span class="time-seconds" data-id=<%=plan.id %>></span>
+          </td>
+          <% if plan.is_complete %>
+            <td> 
+              <input type="checkbox" class= "toggle-complete" data-id= <%= plan.id %> checked > 
+            </td>
+          <% else %>
+            <td>
+              <input type="checkbox" class= "toggle-complete" data-id= <%= plan.id %> >
+            </td>
+          <% end %>
+          <td></td>
+        </tr>
+      <% end %>
+    </table>
+   <h4>
+    Total elapsed time as of <%=Time.zone.now %>: 
+    <%= Time.at(@plans.sum("elapsed_time_seconds")).utc.strftime("%H:%M:%S") %>.
+  </h4>
+  <% end %>
+</div> 
+<div class="clearfix"></div>
 <h4> Available goals: </h4>
 Don't see anything here? <%= link_to 'Add some more goals.', new_user_goal_path(current_user) %>
 <ul>
@@ -150,9 +153,12 @@ Don't see anything here? <%= link_to 'Add some more goals.', new_user_goal_path(
     $.post(toggleTimerUrl, data)
       .done(function(data){
         var el = $(".toggle-timer[data-id='" + planId + "']");
-        var currentText = el.text();
-        var newText = currentText === "start timer" ? "stop timer" : "start timer";
-        el.text(newText);
+        $(el).find('i').toggleClass('fa-hourglass-o fa-hourglass-half');
+        // find the text node associated with this element so it can be directly replaced
+        // leaving the icon alone
+        var elTextNode = $(el).contents().filter(function() {return this.nodeType == 3;}).last();
+        var newText = elTextNode[0].textContent === " start timer" ? " stop timer" : " start timer";
+        elTextNode.replaceWith(document.createTextNode(newText));   
         showTime(planId);
       })
       .fail(function(xhr, textStatus, errorThrown){
