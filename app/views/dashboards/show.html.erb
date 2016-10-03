@@ -6,7 +6,7 @@
     <table class="table">
       <tr>
         <th>Plan Id </th>
-        <th class="table-goal">Goal</th>
+        <th class="table-align-left">Goal</th>
         <th>Target Session Length</th>
         <th>Toggle Timer</th>
         <th>Elapsed Time</th>
@@ -16,7 +16,7 @@
       <% @plans.each do |plan| %>
         <tr>
           <td><%= plan.id %></td>
-          <td class="table-goal"><%= plan.goal.title %></td>
+          <td class="table-align-left"><%= plan.goal.title %></td>
           <td><%= plan.goal.session_length %></td>
           <td>
             <span class="toggle-timer" data-id=<%=plan.id %>><i class="fa fa-hourglass-half"></i> start timer</span>
@@ -46,16 +46,33 @@
   <% end %>
 </div> 
 <div class="clearfix"></div>
-<h4> Available goals: </h4>
-Don't see anything here? <%= link_to 'Add some more goals.', new_user_goal_path(current_user) %>
-<ul>
-  <% current_user.unplanned_goals.each do |g| %> 
-    <li>
-      <%= g.title %> <%= link_to 'start tracking', dashboard_plans_path(@plan, goal_id: g.id), method: :post %>
-    </li>
-  <% end %>
-</ul>
+<br/>
+<div class="container col-sm-10 col-sm-offset-1">
+  <h4> Available goals: </h4>
+  Don't see anything here? <%= link_to 'Add some more goals.', new_user_goal_path(current_user) %>
+  <table class="table">
+    <tr>
+      <th class="table-align-left">Goal</th>
+      <th class="table-align-left">Description</th>
+      <th>Action</th>
+    </tr>
+    <% current_user.unplanned_goals.each do |g| %> 
+      <tr>
+        <td class="table-align-left">
+          <%= g.title %>
+        </td>
+        <td class="table-align-left">
+          <%= g.description %>
+        </td>
+        <td>
+          <%= link_to 'start tracking', dashboard_plans_path(@plan, goal_id: g.id), method: :post %>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+</div>
 
+<div class="clearfix"></div>
 <button id="bigB">ClickMeeee</button>
 
 <script>
