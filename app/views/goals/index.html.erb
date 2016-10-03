@@ -6,18 +6,18 @@
 <div class="container col-xs-10 col-xs-offset-1 col-sm-10 col-sm-offset-1">
   <table class="table table-hover">
     <tr>
-      <th class="col-sm-3">Title</th>
-      <th class="col-sm-6">Description</th>
+      <th class="table-align-left col-sm-3">Title</th>
+      <th class="table-align-left col-sm-6">Description</th>
       <th class="col-sm-3 text-center">Actions</th>
     </tr>
     <tbody>
   <% @goals.each do |g| %>
 
       <tr>
-        <td class="col-sm-3">
+        <td class="table-align-left col-sm-3">
           <%= g.title %> 
         </td>
-        <td class="col-sm-6"> 
+        <td class="table-align-left col-sm-6"> 
           <%= g.description %>
         </td>
         <td class="col-sm-3 text-center">
@@ -28,4 +28,8 @@
     </tbody>
   <% end %>
   </table>
+</div>
+<div class="clearfix"></div>
+<div class="container col-xs-10 col-xs-offset-1 col-sm-10 col-sm-offset-1">
+  <%= link_to '<i class="fa fa-plus" aria-hidden="true"></i> Add new goal'.html_safe, new_user_goal_path(current_user) %>
 </div>

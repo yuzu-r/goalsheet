@@ -11,7 +11,7 @@ class GoalsController < ApplicationController
   def create
     @goal = current_user.goals.create(goal_params)
     if @goal.valid?
-      redirect_to root_path
+      redirect_to user_goals_path(current_user)
     else
       render :new, status: :unprocessable_entity
     end
