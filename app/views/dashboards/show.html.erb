@@ -49,7 +49,8 @@
 <br/>
 <div class="container col-sm-10 col-sm-offset-1">
   <h4> Available goals: </h4>
-  Don't see anything here? <%= link_to 'Add some more goals.', new_user_goal_path(current_user) %>
+  <!-- '<i class="glyphicon glyphicon-pencil" aria-hidden="true"></i>'.html_safe,  -->
+  Don't see anything here? <%= link_to '<i class="fa fa-plus" aria-hidden="true"></i> Add some more goals.'.html_safe, new_user_goal_path(current_user) %>
   <table class="table">
     <tr>
       <th class="table-align-left">Goal</th>
@@ -65,7 +66,7 @@
           <%= g.description %>
         </td>
         <td>
-          <%= link_to 'start tracking', dashboard_plans_path(@plan, goal_id: g.id), method: :post %>
+          <%= link_to '<i class="fa fa-tachometer" aria-hidden="true"></i> start tracking'.html_safe, dashboard_plans_path(@plan, goal_id: g.id), method: :post %>
         </td>
       </tr>
     <% end %>

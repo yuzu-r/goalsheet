@@ -8,3 +8,12 @@ th, td {
 .table-align-left {
   text-align: left;
 }
+
+/* copy the bootstrap anchor color to cue user this is clickable */
+.toggle-timer {
+  color: #337ab7;
+}
+
+.toggle-timer:hover {
+  text-decoration: underline;
+}
