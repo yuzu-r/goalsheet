@@ -3,10 +3,21 @@ class PlansController < ApplicationController
     goal = Goal.find(params[:goal_id])
     @plan = Plan.create(goal_id: goal.id, user: current_user)
     if @plan.valid?
-      redirect_to dashboard_path
+      # redirect_to dashboard_path
     else
       render text: 'fail!', status: :unprocessable_entity
     end
+
+    if request.xhr?
+      render :json => { :success => "success", 
+                        :status_code => 200, 
+                        :plan_id => @plan.id, 
+                        :goal_title => goal.title,
+                        :goal_session_length => goal.session_length}
+
+    else
+      redirect_to dashboard_path
+    end   
   end
 
   def edit
@@ -56,7 +67,6 @@ class PlansController < ApplicationController
   def get_elapsed_time
     @plan = Plan.find(params[:id])
     if @plan.valid?
-
     else
       render text: 'plan not found!', status: :unprocessable_entity
     end
