@@ -3,7 +3,7 @@
   <% if @plans.empty? %>
     No goals are being tracked for today. Add some and get going!
   <% else %>
-    <table class="table">
+    <table id="todays" class="table">
       <tr>
         <th>Plan Id </th>
         <th class="table-align-left">Goal</th>
@@ -19,7 +19,7 @@
           <td class="table-align-left"><%= plan.goal.title %></td>
           <td><%= plan.goal.session_length %></td>
           <td>
-            <span class="toggle-timer" data-id=<%=plan.id %>><i class="fa fa-hourglass-half"></i> start timer</span>
+            <span class="toggle-timer anchor-like" data-id=<%=plan.id %>><i class="fa fa-hourglass-half"></i> start timer</span>
           </td>
           <td>
             <span class="time-hours" data-id=<%=plan.id %>></span> :
@@ -49,16 +49,15 @@
 <br/>
 <div class="container col-sm-10 col-sm-offset-1">
   <h4> Available goals: </h4>
-  <!-- '<i class="glyphicon glyphicon-pencil" aria-hidden="true"></i>'.html_safe,  -->
   Don't see anything here? <%= link_to '<i class="fa fa-plus" aria-hidden="true"></i> Add some more goals.'.html_safe, new_user_goal_path(current_user) %>
-  <table class="table">
+  <table id="available" class="table">
     <tr>
       <th class="table-align-left">Goal</th>
       <th class="table-align-left">Description</th>
       <th>Action</th>
     </tr>
     <% current_user.unplanned_goals.each do |g| %> 
-      <tr>
+      <tr data-goal-id=<%=g.id %>>
         <td class="table-align-left">
           <%= g.title %>
         </td>
@@ -66,17 +65,17 @@
           <%= g.description %>
         </td>
         <td>
-          <%= link_to '<i class="fa fa-tachometer" aria-hidden="true"></i> start tracking'.html_safe, dashboard_plans_path(@plan, goal_id: g.id), method: :post %>
+          <span class="untracked-goal anchor-like", data-goal-id= <%= g.id %>>
+            <i class="fa fa-tachometer" aria-hidden="true"></i> start tracking
+          </span>
         </td>
       </tr>
     <% end %>
   </table>
 </div>
 
-<div class="clearfix"></div>
-<button id="bigB">ClickMeeee</button>
-
 <script>
+var timers_list = [];
   $(document).ready(function(){
     console.log('initializing timers');
     timers_list = [];
@@ -88,19 +87,67 @@
     });
   });
 
-  $('#bigB').on('click', function() {
-    console.log('bigB was clicked!');
+  window.onbeforeunload = stopTimersOnExit;
+
+  $('#todays').on('click', '.toggle-complete', function() {
+    var planId = $(event.target).data('id');
+    toggleComplete(planId);    
   })
 
-  $('.toggle-complete').on('click', function() {
+  $('#todays').on('click', '.toggle-timer', function () {
     var planId = $(event.target).data('id');
-    toggleComplete(planId);
+    toggleTimer(planId, true);    
   })
 
-  $('.toggle-timer').on('click', function() {   
-    var planId = $(event.target).data('id');
-    toggleTimer(planId);
+  $('#available').on('click', '.untracked-goal', function() {
+    var goalId = $(event.target).data('goal-id');
+    addGoal(goalId);    
   })
+
+  function addGoal(goalId) {
+    var addGoalUrl = "/dashboard/plans";
+    var data = {_method: 'POST', goal_id: goalId};
+    $.post(addGoalUrl, data)
+      .done(function(data){
+        console.log('posted! new plan id ' + data.plan_id + ' created');
+        // add as a row to the plans table
+        var newRowHtml = createRowHtml(data.plan_id, data.goal_title, data.goal_session_length);
+        $('#todays').append(newRowHtml);
+        // remove from the available goals table
+        deleteRow('#available', goalId);
+        // need to create the timer javascript object for this item and add to timers_list
+        var newTimer = new Timer(data.plan_id);
+        newTimer.showElapsedTime(); 
+        timers_list.push(newTimer);        
+      })
+      .fail(function(xhr, textStatus, errorThrown){
+          console.log('failed to add goal to today!');
+          console.log(xhr.statusText);
+          console.log(textStatus);
+          console.log(errorThrown);        
+      });
+  }
+
+  function deleteRow(tableId, goalId) {
+    // locate the row in tableId that has goalId in its data attribute
+    var stringTarget = tableId + ' tr[data-goal-id="'+goalId+'"]';
+    var targetEl = $(stringTarget);
+    targetEl.remove();
+  }
+
+  function createRowHtml(planId, goalTitle, goalSessionLength) {
+    var rowHtml = '<tr><td>' + planId + '</td>';
+    rowHtml += '<td class="table-align-left">' + goalTitle + '</td>';
+    rowHtml += '<td>' + goalSessionLength + '</td>';
+    rowHtml += '<td><span class="toggle-timer anchor-like" data-id="' + planId + '">';
+    rowHtml += '<i class="fa fa-hourglass-half"></i> start timer</span></td>';
+    rowHtml += '<td><span class="time-hours" data-id="' + planId + '"></span> : ';
+    rowHtml += '<span class="time-minutes" data-id="' + planId + '"></span> : ';
+    rowHtml += '<span class="time-seconds" data-id="' + planId + '"></span> ';
+    rowHtml += '</td><td><input type="checkbox" class= "toggle-complete" ';
+    rowHtml += 'data-id="' + planId + '"></td><td></td></tr>';
+    return rowHtml;
+  }
 
   function Timer(planId) {
     this.planId = planId;
@@ -126,12 +173,11 @@
           elSecond.text(elSecondZeroPad + parseInt(elapsed_secs));
         })
         .fail(function(xhr, textStatus, errorThrown){
-          console.log('failed to toggle timer!');
+          console.log('failed to retrieve elapsed time from db!');
           console.log(xhr.statusText);
           console.log(textStatus);
           console.log(errorThrown);        
         });
-
     }
     this.stop = function() {
       clearInterval(this.intervalId);
@@ -164,20 +210,24 @@
     }
   }
 
-  function toggleTimer(planId) {
+  function toggleTimer(planId, updateElements) {
+    // updateElements is true if we are staying on the page, false only care about db (e.g. on exit)
     var toggleTimerUrl = "/dashboard/plans/"+planId + "/toggle_timer";
     console.log(toggleTimerUrl);
     var data = {_method: 'PATCH'};
     $.post(toggleTimerUrl, data)
       .done(function(data){
-        var el = $(".toggle-timer[data-id='" + planId + "']");
-        $(el).find('i').toggleClass('fa-hourglass-o fa-hourglass-half');
-        // find the text node associated with this element so it can be directly replaced
-        // leaving the icon alone
-        var elTextNode = $(el).contents().filter(function() {return this.nodeType == 3;}).last();
-        var newText = elTextNode[0].textContent === " start timer" ? " stop timer" : " start timer";
-        elTextNode.replaceWith(document.createTextNode(newText));   
-        showTime(planId);
+        if (updateElements === true) {
+          var el = $(".toggle-timer[data-id='" + planId + "']");
+          $(el).find('i').toggleClass('fa-hourglass-o fa-hourglass-half');
+          // find the text node associated with this element so it can be directly replaced
+          // leaving the icon alone
+          var elTextNode = $(el).contents().filter(function() {return this.nodeType == 3;}).last();
+          var newText = elTextNode[0].textContent === " start timer" ? " stop timer" : " start timer";
+          elTextNode.replaceWith(document.createTextNode(newText));
+          showTime(planId);
+        }
+        console.log('toggle timer success!')
       })
       .fail(function(xhr, textStatus, errorThrown){
         console.log('failed to toggle timer!');
@@ -185,6 +235,14 @@
         console.log(textStatus);
         console.log(errorThrown);        
       })
+  }
+
+  function stopTimersOnExit(){
+    for (var i = 0; i < timers_list.length; i++) {
+      if (timers_list[i].isRunning == true) {  
+        toggleTimer(timers_list[i].planId, false);
+      }
+    } 
   }
 
   function showTime(planId) {
@@ -215,5 +273,4 @@
         console.log(errorThrown);
       });
   }
-
 </script>

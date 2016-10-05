@@ -9,11 +9,12 @@ th, td {
   text-align: left;
 }
 
-/* copy the bootstrap anchor color to cue user this is clickable */
-.toggle-timer {
-  color: #337ab7;
+/* copy the bootstrap anchor color to cue user this is clickable (for non-anchors) */
+.anchor-like {
+  color: #337ab7;  
 }
 
-.toggle-timer:hover {
+.anchor-like:hover {
   text-decoration: underline;
+  cursor: pointer;
 }
