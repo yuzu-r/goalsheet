@@ -1,49 +1,45 @@
 <div class="container col-sm-10 col-sm-offset-1">
   <h4>Here's what's up for today:</h4>
-  <% if @plans.empty? %>
-    No goals are being tracked for today. Add some and get going!
-  <% else %>
-    <table id="todays" class="table">
+  <table id="todays" class="table">
+    <tr>
+      <th>Plan Id </th>
+      <th class="table-align-left">Goal</th>
+      <th>Target Session Length</th>
+      <th>Toggle Timer</th>
+      <th>Elapsed Time</th>
+      <th>Mark Goal Complete</th>
+      <th>Remove Goal for Today</th>
+    </tr>  
+    <% @plans.each do |plan| %>
       <tr>
-        <th>Plan Id </th>
-        <th class="table-align-left">Goal</th>
-        <th>Target Session Length</th>
-        <th>Toggle Timer</th>
-        <th>Elapsed Time</th>
-        <th>Mark Goal Complete</th>
-        <th>Remove Goal for Today</th>
+        <td><%= plan.id %></td>
+        <td class="table-align-left"><%= plan.goal.title %></td>
+        <td><%= plan.goal.session_length %></td>
+        <td>
+          <span class="toggle-timer anchor-like" data-id=<%=plan.id %>><i class="fa fa-hourglass-half"></i> start timer</span>
+        </td>
+        <td>
+          <span class="time-hours" data-id=<%=plan.id %>></span> :
+          <span class="time-minutes" data-id=<%=plan.id %>></span> :
+          <span class="time-seconds" data-id=<%=plan.id %>></span>
+        </td>
+        <% if plan.is_complete %>
+          <td> 
+            <input type="checkbox" class= "toggle-complete" data-id= <%= plan.id %> checked > 
+          </td>
+        <% else %>
+          <td>
+            <input type="checkbox" class= "toggle-complete" data-id= <%= plan.id %> >
+          </td>
+        <% end %>
+        <td></td>
       </tr>
-      <% @plans.each do |plan| %>
-        <tr>
-          <td><%= plan.id %></td>
-          <td class="table-align-left"><%= plan.goal.title %></td>
-          <td><%= plan.goal.session_length %></td>
-          <td>
-            <span class="toggle-timer anchor-like" data-id=<%=plan.id %>><i class="fa fa-hourglass-half"></i> start timer</span>
-          </td>
-          <td>
-            <span class="time-hours" data-id=<%=plan.id %>></span> :
-            <span class="time-minutes" data-id=<%=plan.id %>></span> :
-            <span class="time-seconds" data-id=<%=plan.id %>></span>
-          </td>
-          <% if plan.is_complete %>
-            <td> 
-              <input type="checkbox" class= "toggle-complete" data-id= <%= plan.id %> checked > 
-            </td>
-          <% else %>
-            <td>
-              <input type="checkbox" class= "toggle-complete" data-id= <%= plan.id %> >
-            </td>
-          <% end %>
-          <td></td>
-        </tr>
-      <% end %>
-    </table>
-   <h4>
+    <% end %> <!-- plans each do -->
+  </table>
+  <h4>
     Total elapsed time as of <%=Time.zone.now %>: 
     <%= Time.at(@plans.sum("elapsed_time_seconds")).utc.strftime("%H:%M:%S") %>.
   </h4>
-  <% end %>
 </div> 
 <div class="clearfix"></div>
 <br/>
